@@ -1,0 +1,1214 @@
+<!DOCTYPE html>
+
+<html class="light" lang="es">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title> Martex | Control de Plagas Inteligente</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200;300;400;500;600;700;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "alert": "#E90818",
+                        "precaution": "#FED140",
+                        "on-primary": "#daffa9",
+                        "on-primary-fixed": "#2b4900",
+                        "tertiary-fixed-dim": "#ebe14d",
+                        "secondary": "#576100",
+                        "primary": "#3f6600",
+                        "on-primary-container": "#395d00",
+                        "on-surface": "#2d2f32",
+                        "primary-container": "#a2fe00",
+                        "surface-container-highest": "#dbdde2",
+                        "surface-container-lowest": "#ffffff",
+                        "surface": "#f6f6fa",
+                        "primary-fixed": "#a2fe00",
+                        "surface-container-low": "#f0f0f5",
+                        "outline": "#75777a",
+                        "outline-variant": "#acadb1",
+                        "on-secondary-fixed-variant": "#576100",
+                        "on-error": "#ffefec",
+                        "on-tertiary-container": "#5d5900",
+                        "secondary-fixed-dim": "#cede55",
+                        "surface-tint": "#3f6600",
+                        "on-error-container": "#520c00",
+                        "on-secondary-container": "#4e5700",
+                        "error-container": "#f95630",
+                        "inverse-surface": "#0c0e11",
+                        "on-tertiary": "#fff784",
+                        "surface-container": "#e7e8ed",
+                        "tertiary-container": "#f9f05a",
+                        "on-secondary-fixed": "#3c4300",
+                        "background": "#f6f6fa",
+                        "tertiary": "#625e00",
+                        "primary-dim": "#365900",
+                        "on-surface-variant": "#5a5b5f",
+                        "inverse-primary": "#a2fe00",
+                        "surface-variant": "#dbdde2",
+                        "on-tertiary-fixed": "#4a4600",
+                        "on-background": "#2d2f32",
+                        "inverse-on-surface": "#9c9da1",
+                        "tertiary-fixed": "#f9f05a",
+                        "secondary-fixed": "#dcec62",
+                        "surface-bright": "#f6f6fa",
+                        "secondary-container": "#dcec62",
+                        "primary-fixed-dim": "#98ee00",
+                        "on-tertiary-fixed-variant": "#686300",
+                        "surface-container-high": "#e1e2e8",
+                        "surface-dim": "#d2d4da",
+                        "tertiary-dim": "#565100",
+                        "error-dim": "#b92902",
+                        "on-primary-fixed-variant": "#406800",
+                        "secondary-dim": "#4c5400",
+                        "error": "#b02500",
+                        "on-secondary": "#ecfd70"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Manrope"],
+                        "label": ["Manrope"]
+                    },
+                    borderRadius: { "DEFAULT": "1rem", "lg": "2rem", "xl": "3rem", "full": "9999px" },
+                },
+            },
+        }
+    </script>
+    <style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(163, 255, 0, 0.3);
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+
+        .dark .glass-panel {
+            background: rgba(12, 14, 17, 0.7);
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        .glass-panel {
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+
+        .scrollbar-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        .scrollbar-hide {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        #report-carousel {
+            height: 280px;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+            snap-align: start;
+            overflow: hidden;
+        }
+
+        .card-animate {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+
+        .card-animate:nth-child(1) {
+            transition-delay: 0s;
+        }
+
+        .card-animate:nth-child(2) {
+            transition-delay: 0.15s;
+        }
+
+        .card-animate.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .ticker-double {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            height: 350px;
+            overflow: hidden;
+            position: relative;
+            mask-image: linear-gradient(to bottom,
+                    transparent 0%,
+                    black 5%,
+                    black 95%,
+                    transparent 100%);
+            -webkit-mask-image: linear-gradient(to bottom,
+                    transparent 0%,
+                    black 5%,
+                    black 95%,
+                    transparent 100%);
+        }
+
+        .ticker-col {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            min-width: 0;
+        }
+
+        .track-up {
+            animation: go-up 22s linear infinite;
+        }
+
+        .track-down {
+            animation: go-down 26s linear infinite;
+            transform: translateY(-50%);
+        }
+
+        .ticker-col:hover .track-up,
+        .ticker-col:hover .track-down {
+            animation-play-state: paused;
+        }
+
+        @keyframes go-up {
+            0% {
+                transform: translateY(0);
+            }
+
+            100% {
+                transform: translateY(-50%);
+            }
+        }
+
+        @keyframes go-down {
+            0% {
+                transform: translateY(-50%);
+            }
+
+            100% {
+                transform: translateY(0);
+            }
+        }
+
+        .ticker-set {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .ticker-set+.ticker-set {
+            margin-top: 16px;
+        }
+
+        .ticker-card {
+            background: #1a1a1c;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            border-radius: 14px;
+            padding: 20px 22px;
+            display: flex;
+            align-items: flex-start;
+            gap: 14px;
+            flex-shrink: 0;
+        }
+
+        .ticker-icon-wrap,
+        .ticker-iw {
+            /* ← alias para el HTML */
+            width: 38px;
+            height: 38px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .ticker-icon-wrap.red,
+        .ticker-iw.red {
+            background: rgba(239, 68, 68, .08);
+            border: 1px solid rgba(239, 68, 68, .20);
+        }
+
+        .ticker-icon-wrap.yellow,
+        .ticker-iw.yellow {
+            background: rgba(245, 158, 11, .08);
+            border: 1px solid rgba(245, 158, 11, .20);
+        }
+
+        .ticker-icon,
+        .ticker-mi {
+            /* ← alias para el HTML */
+            font-family: 'Material Symbols Outlined';
+            font-size: 19px;
+            line-height: 1;
+            font-variation-settings: 'FILL' 0, 'wght' 300, 'GRAD' 0, 'opsz' 48;
+        }
+
+        .ticker-icon.red,
+        .ticker-mi.red {
+            color: #ef4444;
+        }
+
+        .ticker-icon.yellow,
+        .ticker-mi.yellow {
+            color: #f59e0b;
+        }
+
+        .ticker-card h4 {
+            color: #e4e4e7;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .ticker-card p {
+            color: #52525b;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+    </style>
+</head>
+
+<body class="bg-surface font-body text-on-surface selection:bg-primary-fixed selection:text-on-primary-fixed">
+    <!-- TopNavBar Navigation Shell -->
+    <nav
+        class="fixed top-0 w-full z-50 bg-white/70 dark:bg-zinc-900/70 backdrop-blur-xl shadow-[0px_24px_48px_rgba(0,0,0,0.06)]">
+        <div class="flex justify-between items-center w-full px-8 py-4 max-w-7xl mx-auto">
+            <div class="text-xl font-black tracking-tighter text-zinc-900 dark:text-white uppercase">
+                Martex
+            </div>
+            <div class="hidden md:flex gap-8 items-center">
+                <a class="font-['Manrope'] font-bold tracking-tight text-sm uppercase text-zinc-600 dark:text-zinc-400 hover:text-[#000000] transition-colors"
+                    href="#process">Procesos</a>
+                <a class="font-['Manrope'] font-bold tracking-tight text-sm uppercase text-zinc-600 dark:text-zinc-400 hover:text-[#000000] transition-colors"
+                    href="#services">Servicios</a>
+                <a class="font-['Manrope'] font-bold tracking-tight text-sm uppercase text-zinc-600 dark:text-zinc-400 hover:text-[#000000] transition-colors"
+                    href="#sectors">Sectores</a>
+                <a class="font-['Manrope'] font-bold tracking-tight text-sm uppercase text-zinc-600 dark:text-zinc-400 hover:text-[#000000] transition-colors"
+                    href="#coverage">Cobertura</a>
+            </div>
+            <button
+                class="bg-primary-fixed text-on-primary-fixed px-6 py-2.5 rounded-full font-bold text-sm uppercase tracking-wider hover:bg-primary-fixed-hover hover:text-[#000000] transition-all duration-300 scale-95 active:scale-90 transition-transform">
+                Cotización Gratuita
+            </button>
+        </div>
+    </nav>
+    <main class="pt-24 overflow-x-hidden">
+        <!-- Hero Section -->
+        <section class="relative px-8 pt-12 pb-24 max-w-7xl mx-auto min-h-[870px] flex flex-col justify-center">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                <div class="z-10">
+                    <span
+                        class="inline-block px-4 py-1.5 rounded-full bg-primary-container text-on-primary-container text-xs font-black uppercase tracking-widest mb-6">
+                        Control de Plagas Inteligente
+                    </span>
+                    <h1
+                        class="text-5xl md:text-7xl font-black font-headline tracking-tighter leading-[0.9] text-inverse-surface mb-8">
+                        Tu restaurante <span class="text-primary-fixed-dim">libre de plagas</span>, con reportes
+                        inteligentes.
+                    </h1>
+                    <p class="text-lg text-on-surface-variant max-w-lg mb-10 leading-relaxed">
+                        Controlamos amenazas biológicas con <b>equipo de grado industrial y
+                            reportes digitales fáciles de leer.</b><br>
+                        Protección absoluta para tu inversión.
+                    </p>
+                    <div class="flex flex-wrap gap-4">
+                        <button
+                            class="bg-primary-fixed text-on-primary-fixed px-8 py-4 rounded-xl font-black uppercase tracking-tight flex items-center gap-3 shadow-xl hover:scale-105 transition-transform">
+                            <span class="material-symbols-outlined">chat</span>
+                            Cotizar en Whatsapp
+                        </button>
+                        <button
+                            class="border-2 border-outline-variant/20 px-8 py-4 rounded-xl font-bold text-on-surface hover:bg-surface-container transition-colors">
+                            Ver Planes Mensuales
+                        </button>
+                    </div>
+                </div>
+                <!-- Asymmetric Editorial Image Stack -->
+                <div class="relative h-[500px] lg:h-[600px] mt-12 lg:mt-0">
+                    <div class="absolute right-0 top-0 w-4/5 h-4/5 rounded-lg overflow-hidden shadow-2xl z-0">
+                        <img class="w-full h-full object-cover"
+                            data-alt="Modern laboratory technician inspecting scientific samples"
+                            src="IMGS/b26e7faf91e25aef3cb068616dc0d5af.jpg" />
+                    </div>
+                    <!-- DIV GLASS -->
+                    <div class="absolute left-0 bottom-6 w-[88%] h-auto z-20">
+                        <div
+                            class="absolute inset-0 glass-panel bg-black/55 rounded-xl border border-white/25 shadow-2xl">
+                        </div>
+
+                        <div class="relative p-5 pb-12">
+
+                            <div id="report-carousel"
+                                class="flex overflow-x-hidden snap-x snap-mandatory scrollbar-hide scroll-smooth w-full">
+
+                                <!-- ── SLIDE 1: Barras de zonas ── -->
+                                <div class="slide snap-center px-1">
+
+                                    <div class="flex justify-between items-start mb-5">
+                                        <div class="glass-panel bg-black/30 rounded-xl p-6 border border-white/10">
+                                            <h3 class="text-lg font-bold text-primary-fixed-dim leading-none">Reporte
+                                                Digital</h3>
+                                            <p
+                                                class="text-[10px] text-white/70 uppercase tracking-[0.15em] font-semibold mt-1">
+                                                Incidencia General <span class="text-white font-bold">36.5%</span>
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    <div class="space-y-4">
+                                        <div class="space-y-1.5">
+                                            <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                                                <div class="h-full bg-primary-fixed w-[98%] shadow-[0_0_10px_#a2fe00]">
+                                                </div>
+                                            </div>
+                                            <div
+                                                class="flex justify-between items-center text-[10px] font-bold text-white uppercase tracking-wider">
+                                                <span class="bg-white/5 px-2 py-1 rounded border border-white/10">Zona A
+                                                    (Comedor)</span>
+                                                <span class="text-primary-fixed">Protegido</span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-1.5">
+                                            <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                                                <div class="h-full bg-precaution w-[75%]"></div>
+                                            </div>
+                                            <div
+                                                class="flex justify-between items-center text-[10px] font-bold text-white uppercase tracking-wider">
+                                                <span class="bg-white/5 px-2 py-1 rounded border border-white/10">Zona C
+                                                    (Cocina)</span>
+                                                <span class="text-precaution">Observaciones</span>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-1.5">
+                                            <div class="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                                                <div class="h-full bg-alert w-[55%]"></div>
+                                            </div>
+                                            <div
+                                                class="flex justify-between items-center text-[10px] font-bold text-white uppercase tracking-wider">
+                                                <span class="bg-white/5 px-2 py-1 rounded border border-white/10">Zona C
+                                                    (Almacén)</span>
+                                                <span class="text-alert">Alerta</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- ── SLIDE 2: Donut + Desglose ── -->
+                                <div class="slide snap-center px-1">
+
+                                    <!-- 
+            Cambio: siempre flex-row (no flex-col en mobile),
+            donut más pequeño (w-28 h-28), gap reducido (gap-5).
+            Así el contenido cabe sin cortarse.
+          -->
+                                    <div class="flex flex-row items-center gap-5 h-full">
+
+                                        <!-- Donut chart -->
+                                        <div class="relative w-28 h-28 shrink-0 flex items-center justify-center">
+                                            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 160 160">
+                                                <defs>
+                                                    <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="0%">
+                                                        <stop offset="0%" style="stop-color:#a2fe00;stop-opacity:1" />
+                                                        <stop offset="100%" style="stop-color:#b5ff42;stop-opacity:1" />
+                                                    </linearGradient>
+                                                </defs>
+                                                <circle cx="80" cy="80" r="70" stroke-width="10" stroke="currentColor"
+                                                    fill="transparent" class="text-white/5" />
+                                                <circle cx="80" cy="80" r="70" stroke-width="12"
+                                                    stroke="url(#grad-green)" fill="transparent"
+                                                    stroke-dasharray="439.8" stroke-dashoffset="149.5" />
+                                                <circle cx="80" cy="80" r="70" stroke-width="12" stroke="#FED140"
+                                                    fill="transparent" stroke-dasharray="439.8"
+                                                    stroke-dashoffset="331.6" class="opacity-80" />
+                                            </svg>
+                                            <div
+                                                class="absolute inset-4 bg-black/70 rounded-full flex flex-col items-center justify-center border-2 border-white/5">
+                                                <span class="text-white font-black text-2xl leading-none">36%</span>
+                                                <span
+                                                    class="text-[8px] text-white/50 font-bold uppercase tracking-widest mt-0.5">Riesgo</span>
+                                            </div>
+                                        </div>
+
+                                        <!-- Desglose -->
+                                        <div class="flex-1 min-w-0 space-y-2">
+                                            <div
+                                                class="flex justify-between items-center border-b border-white/10 pb-2 mb-3">
+                                                <h4 class="text-primary-fixed-dim font-black text-sm tracking-tight">
+                                                    Desglose de Amenazas</h4>
+                                                <span
+                                                    class="text-[9px] text-white/50 uppercase font-bold tracking-wider">Actual</span>
+                                            </div>
+
+                                            <!-- Zonas seguras -->
+                                            <div
+                                                class="glass-panel bg-primary-fixed/5 rounded-lg p-2.5 border border-white/5 flex items-center gap-2">
+                                                <div
+                                                    class="w-7 h-7 rounded-full bg-primary-fixed/10 border border-primary-fixed/20 flex items-center justify-center shrink-0">
+                                                    <svg class="w-3.5 h-3.5 text-primary-fixed" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+                                                    </svg>
+                                                </div>
+                                                <div class="flex justify-between items-center w-full">
+                                                    <span
+                                                        class="text-[10px] text-primary-fixed font-bold uppercase tracking-wider">Zonas
+                                                        Seguras</span>
+                                                    <span class="text-base font-extrabold text-primary-fixed">66<span
+                                                            class="text-[9px] text-primary-fixed/60">%</span></span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Cucaracha -->
+                                            <div
+                                                class="glass-panel bg-precaution/10 rounded-lg p-2.5 border border-precaution/10 flex items-center gap-2">
+                                                <div
+                                                    class="w-7 h-7 rounded-full bg-precaution/10 border border-precaution/20 flex items-center justify-center shrink-0">
+                                                    <svg class="w-3.5 h-3.5 text-precaution" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2"
+                                                            d="M12 9v3m0 0v3m0-3h3m-3 0H9m12 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                                    </svg>
+                                                </div>
+                                                <div class="flex justify-between items-center w-full">
+                                                    <span
+                                                        class="text-[10px] text-precaution font-bold uppercase tracking-wider">Cucaracha</span>
+                                                    <span class="text-base font-extrabold text-precaution">20<span
+                                                            class="text-[9px] text-precaution/60">%</span></span>
+                                                </div>
+                                            </div>
+
+                                            <!-- Hormiga -->
+                                            <div
+                                                class="glass-panel bg-precaution/5 rounded-lg p-2.5 border border-precaution/10 flex items-center gap-2">
+                                                <div
+                                                    class="w-7 h-7 rounded-full bg-precaution/10 border border-precaution/20 flex items-center justify-center shrink-0">
+                                                    <svg class="w-3.5 h-3.5 text-precaution" fill="none"
+                                                        stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                                            stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                                                    </svg>
+                                                </div>
+                                                <div class="flex justify-between items-center w-full">
+                                                    <span
+                                                        class="text-[10px] text-precaution font-bold uppercase tracking-wider">Hormiga</span>
+                                                    <span class="text-base font-extrabold text-precaution">14<span
+                                                            class="text-[9px] text-precaution/60">%</span></span>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+
+                            </div><!-- /carousel -->
+
+                            <!-- Dots -->
+                            <div class="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
+                                <button id="dot-0" onclick="scrollToSlide(0)"
+                                    class="w-8 h-1 bg-primary-fixed rounded-full transition-all duration-500 opacity-100"></button>
+                                <button id="dot-1" onclick="scrollToSlide(1)"
+                                    class="w-8 h-1 bg-white/20 rounded-full transition-all duration-500 opacity-50"></button>
+                            </div>
+
+                        </div>
+                    </div><!-- /glass panel -->
+
+                    <!-- Floating High-Tech Element -->
+                    <div
+                        class="absolute -top-6 -left-6 bg-inverse-surface text-white p-6 rounded-lg shadow-xl z-30 flex items-center gap-4 border border-white/10">
+                        <div class="w-12 h-12 rounded-full bg-primary-fixed flex items-center justify-center">
+                            <span class="material-symbols-outlined text-inverse-surface"
+                                style="font-variation-settings: 'FILL' 1;">security</span>
+                        </div>
+                        <div>
+                            <p class="text-[10px] uppercase tracking-widest font-bold opacity-60">Estatus de Operación
+                            </p>
+                            <p class="font-black text-lg">Licencia Sanitaria Activa</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+
+        <!-- Problem Statement Section -->
+        <section class="bg-inverse-surface py-24 px-8 overflow-hidden relative">
+
+            <div
+                class="absolute -top-24 -left-24 w-64 h-64 bg-primary-fixed/10 blur-[100px] rounded-full pointer-events-none">
+            </div>
+
+            <div class="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+
+                <!-- ══════════════════════════════
+         COLUMNA IZQUIERDA
+         ══════════════════════════════ -->
+                <div class="relative">
+                    <h2
+                        class="text-white text-4xl md:text-5xl font-black font-headline tracking-tighter leading-tight mb-8">
+                        Una sola plaga puede costarte una inspección de
+                        <span class="text-primary-fixed">Cofepris</span>.
+                    </h2>
+                    <p class="text-zinc-400 text-lg mb-8 max-w-md">
+                        En el sector restaurantero, la higiene no es negociable. No solo protegemos
+                        tu espacio, blindamos tu reputación legal y sanitaria ante las autoridades.
+                    </p>
+                    <div class="flex flex-col gap-3 text-white/50 text-sm font-bold uppercase tracking-widest">
+                        <span class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-error rounded-full"></span> Riesgo Sanitario
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-error rounded-full"></span> Clausura Temporal
+                        </span>
+                        <span class="flex items-center gap-2">
+                            <span class="w-2 h-2 bg-error rounded-full"></span> Pérdida de Licencia
+                        </span>
+                    </div>
+                </div>
+
+                <!-- ══════════════════════════════
+         COLUMNA DERECHA — ticker doble
+         ══════════════════════════════ -->
+                <div class="ticker-double">
+
+                    <!-- ── Columna izquierda: sube ── -->
+                    <div class="ticker-col">
+                        <div class="track-up">
+
+                            <div class="ticker-set">
+                                <div class="ticker-card">
+                                    <div class="ticker-iw red"><span class="ticker-mi red">gavel</span></div>
+                                    <div>
+                                        <h4>Multas Severas</h4>
+                                        <p>Sanciones que comprometen tu rentabilidad diaria.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw yellow"><span class="ticker-mi yellow">warning</span></div>
+                                    <div>
+                                        <h4>Clausura Temporal</h4>
+                                        <p>Tu negocio cerrado sin previo aviso.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw red"><span class="ticker-mi red">no_food</span></div>
+                                    <div>
+                                        <h4>Decomiso</h4>
+                                        <p>Retiro total de inventario contaminado.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw yellow"><span class="ticker-mi yellow">assignment_late</span>
+                                    </div>
+                                    <div>
+                                        <h4>Expediente Negativo</h4>
+                                        <p>Historial que bloquea renovación de licencia.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SET 2: clon exacto para loop sin saltos -->
+                            <div class="ticker-set">
+                                <div class="ticker-card">
+                                    <div class="ticker-iw red"><span class="ticker-mi red">gavel</span></div>
+                                    <div>
+                                        <h4>Multas Severas</h4>
+                                        <p>Sanciones que comprometen tu rentabilidad diaria.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw yellow"><span class="ticker-mi yellow">warning</span></div>
+                                    <div>
+                                        <h4>Clausura Temporal</h4>
+                                        <p>Tu negocio cerrado sin previo aviso.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw red"><span class="ticker-mi red">no_food</span></div>
+                                    <div>
+                                        <h4>Decomiso</h4>
+                                        <p>Retiro total de inventario contaminado.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw yellow"><span class="ticker-mi yellow">assignment_late</span>
+                                    </div>
+                                    <div>
+                                        <h4>Expediente Negativo</h4>
+                                        <p>Historial que bloquea renovación de licencia.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- ── Columna derecha: baja ── -->
+                    <div class="ticker-col">
+                        <div class="track-down">
+
+                            <div class="ticker-set">
+                                <div class="ticker-card">
+                                    <div class="ticker-iw red"><span class="ticker-mi red">block</span></div>
+                                    <div>
+                                        <h4>Pérdida de Marca</h4>
+                                        <p>Confianza que tardaste años en construir.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw yellow"><span class="ticker-mi yellow">trending_down</span>
+                                    </div>
+                                    <div>
+                                        <h4>Caída en Reseñas</h4>
+                                        <p>Una queja sanitaria destruye tu rating online.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw red"><span class="ticker-mi red">groups</span></div>
+                                    <div>
+                                        <h4>Fuga de Clientes</h4>
+                                        <p>No regresan tras un señalamiento público.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw yellow"><span class="ticker-mi yellow">receipt_long</span>
+                                    </div>
+                                    <div>
+                                        <h4>Costos Legales</h4>
+                                        <p>Litigios que superan la prevención anual.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- SET 2: clon exacto para loop sin saltos -->
+                            <div class="ticker-set">
+                                <div class="ticker-card">
+                                    <div class="ticker-iw red"><span class="ticker-mi red">block</span></div>
+                                    <div>
+                                        <h4>Pérdida de Marca</h4>
+                                        <p>Confianza que tardaste años en construir.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw yellow"><span class="ticker-mi yellow">trending_down</span>
+                                    </div>
+                                    <div>
+                                        <h4>Caída en Reseñas</h4>
+                                        <p>Una queja sanitaria destruye tu rating online.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw red"><span class="ticker-mi red">groups</span></div>
+                                    <div>
+                                        <h4>Fuga de Clientes</h4>
+                                        <p>No regresan tras un señalamiento público.</p>
+                                    </div>
+                                </div>
+                                <div class="ticker-card">
+                                    <div class="ticker-iw yellow"><span class="ticker-mi yellow">receipt_long</span>
+                                    </div>
+                                    <div>
+                                        <h4>Costos Legales</h4>
+                                        <p>Litigios que superan la prevención anual.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div><!-- /ticker-double -->
+
+            </div><!-- /grid -->
+        </section>
+
+
+        <!-- Process Section -->
+        <section class="py-32 px-8 max-w-7xl mx-auto" id="process">
+            <div class="mb-20 text-center md:text-left">
+                <h2 class="text-4xl md:text-5xl font-black font-headline tracking-tighter text-inverse-surface mb-4">
+                    Nuestro Proceso Tecnológico</h2>
+                <p class="text-on-surface-variant max-w-2xl">Digitalizamos cada paso para garantizar que el tratamiento
+                    sea efectivo y transparente.</p>
+            </div>
+            <div class="grid md:grid-cols-4 gap-8">
+                <!-- Step 1 -->
+                <div
+                    class="group relative bg-surface-container-low p-10 rounded-lg hover:bg-white transition-all duration-500 border border-transparent hover:border-primary-fixed/20 shadow-sm hover:shadow-2xl">
+                    <span
+                        class="text-6xl font-black text-on-surface/5 absolute top-4 right-6 group-hover:text-primary-fixed/20 transition-colors">01</span>
+                    <div
+                        class="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center mb-8 group-hover:bg-primary-fixed transition-colors">
+                        <span class="material-symbols-outlined text-inverse-surface">biotech</span>
+                    </div>
+                    <h3 class="text-xl font-black mb-4 tracking-tight">Diagnóstico</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">Identificación precisa de especies y
+                        puntos críticos de entrada mediante sensores térmicos.</p>
+                </div>
+                <!-- Step 2 -->
+                <div
+                    class="group relative bg-surface-container-low p-10 rounded-lg hover:bg-white transition-all duration-500 border border-transparent hover:border-primary-fixed/20 shadow-sm hover:shadow-2xl md:mt-12">
+                    <span
+                        class="text-6xl font-black text-on-surface/5 absolute top-4 right-6 group-hover:text-primary-fixed/20 transition-colors">02</span>
+                    <div
+                        class="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center mb-8 group-hover:bg-primary-fixed transition-colors">
+                        <span class="material-symbols-outlined text-inverse-surface">science</span>
+                    </div>
+                    <h3 class="text-xl font-black mb-4 tracking-tight">Tratamiento</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">Aplicación focalizada de agentes de grado
+                        alimenticio, seguros para humanos pero letales para plagas.</p>
+                </div>
+                <!-- Step 3 -->
+                <div
+                    class="group relative bg-surface-container-low p-10 rounded-lg hover:bg-white transition-all duration-500 border border-transparent hover:border-primary-fixed/20 shadow-sm hover:shadow-2xl">
+                    <span
+                        class="text-6xl font-black text-on-surface/5 absolute top-4 right-6 group-hover:text-primary-fixed/20 transition-colors">03</span>
+                    <div
+                        class="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center mb-8 group-hover:bg-primary-fixed transition-colors">
+                        <span class="material-symbols-outlined text-inverse-surface">tablet_mac</span>
+                    </div>
+                    <h3 class="text-xl font-black mb-4 tracking-tight">Reporte Digital</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">Certificados digitales inmediatos con
+                        fotografías y evidencia de puntos tratados para tu control.</p>
+                </div>
+                <!-- Step 4 -->
+                <div
+                    class="group relative bg-surface-container-low p-10 rounded-lg hover:bg-white transition-all duration-500 border border-transparent hover:border-primary-fixed/20 shadow-sm hover:shadow-2xl md:mt-12">
+                    <span
+                        class="text-6xl font-black text-on-surface/5 absolute top-4 right-6 group-hover:text-primary-fixed/20 transition-colors">04</span>
+                    <div
+                        class="w-14 h-14 rounded-full bg-surface-container-highest flex items-center justify-center mb-8 group-hover:bg-primary-fixed transition-colors">
+                        <span class="material-symbols-outlined text-inverse-surface">track_changes</span>
+                    </div>
+                    <h3 class="text-xl font-black mb-4 tracking-tight">Seguimiento</h3>
+                    <p class="text-sm text-on-surface-variant leading-relaxed">Monitoreo continuo y visitas de refuerzo
+                        programadas para asegurar un entorno permanentemente limpio.</p>
+                </div>
+            </div>
+        </section>
+        <!-- New: Plagas y Servicios Section -->
+        <section class="py-32 px-8 bg-surface-container-lowest overflow-hidden relative" id="specialty">
+            <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-7xl h-full pointer-events-none">
+                <div class="absolute top-20 -left-20 w-96 h-96 bg-primary-fixed/5 blur-[120px] rounded-full"></div>
+            </div>
+            <div class="max-w-7xl mx-auto relative">
+                <div class="flex flex-col items-center text-center mb-20">
+                    <span class="text-primary font-black uppercase tracking-[0.3em] text-xs mb-4">Expertise Total</span>
+                    <h2 class="text-4xl md:text-6xl font-black font-headline tracking-tighter text-inverse-surface">
+                        Nuestra Especialidad</h2>
+                    <div class="w-20 h-1.5 bg-primary-fixed mt-6 rounded-full"></div>
+                </div>
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+                    <!-- Category 1 -->
+                    <div
+                        class="glass-panel group p-8 rounded-lg border border-outline-variant/10 hover:border-primary-fixed/50 transition-all duration-500 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-10px_rgba(163,255,0,0.15)] flex flex-col items-center text-center">
+                        <div class="mb-8 relative">
+                            <div
+                                class="absolute inset-0 bg-primary-fixed/20 blur-xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-500">
+                            </div>
+                            <div
+                                class="w-20 h-20 rounded-2xl bg-inverse-surface flex items-center justify-center group-hover:bg-primary-fixed transition-colors duration-500 relative z-10">
+                                <span
+                                    class="material-symbols-outlined text-primary-fixed text-4xl group-hover:text-on-primary-fixed transition-colors duration-500">
+                                    pest_control_rodent
+                                </span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-black mb-4 tracking-tight text-inverse-surface">Control de
+                            Roedores</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Estrategias de exclusión y
+                            eliminación total para erradicar las amenazas urbanas
+                            más críticas en zonas de almacenamiento y cocina.</p>
+                        <div
+                            class="mt-auto pt-8 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
+                            Eliminación Total <span class="material-symbols-outlined text-sm">bolt</span>
+                        </div>
+                    </div>
+                    <!-- Category 2 -->
+                    <div
+                        class="glass-panel group p-8 rounded-lg border border-outline-variant/10 hover:border-primary-fixed/50 transition-all duration-500 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-10px_rgba(163,255,0,0.15)] flex flex-col items-center text-center">
+                        <div class="mb-8 relative">
+                            <div
+                                class="absolute inset-0 bg-primary-fixed/20 blur-xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-500">
+                            </div>
+                            <div
+                                class="w-20 h-20 rounded-2xl bg-inverse-surface flex items-center justify-center group-hover:bg-primary-fixed transition-colors duration-500 relative z-10">
+                                <span
+                                    class="material-symbols-outlined text-primary-fixed text-4xl group-hover:text-on-primary-fixed transition-colors duration-500">pest_control</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-black mb-4 tracking-tight text-inverse-surface">Insectos en General</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Manejo especializado de arañas,
+                            chinches, hormigas y voladores mediante barreras químicas inteligentes.</p>
+                        <div
+                            class="mt-auto pt-8 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
+                            Barrera Activa <span class="material-symbols-outlined text-sm">shield</span>
+                        </div>
+                    </div>
+                    <!-- Category 3 -->
+                    <div
+                        class="glass-panel group p-8 rounded-lg border border-outline-variant/10 hover:border-primary-fixed/50 transition-all duration-500 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-10px_rgba(163,255,0,0.15)] flex flex-col items-center text-center">
+                        <div class="mb-8 relative">
+                            <div
+                                class="absolute inset-0 bg-primary-fixed/20 blur-xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-500">
+                            </div>
+                            <div
+                                class="w-20 h-20 rounded-2xl bg-inverse-surface flex items-center justify-center group-hover:bg-primary-fixed transition-colors duration-500 relative z-10">
+                                <span
+                                    class="material-symbols-outlined text-primary-fixed text-4xl group-hover:text-on-primary-fixed transition-colors duration-500">factory</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-black mb-4 tracking-tight text-inverse-surface">Control de
+                            Instalaciones</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Soluciones de grado industrial para
+                            grandes superficies, almacenes y centros logísticos complejos.</p>
+                        <div
+                            class="mt-auto pt-8 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
+                            Grado Industrial <span
+                                class="material-symbols-outlined text-sm">precision_manufacturing</span>
+                        </div>
+                    </div>
+                    <!-- Category 4 -->
+                    <div
+                        class="glass-panel group p-8 rounded-lg border border-outline-variant/10 hover:border-primary-fixed/50 transition-all duration-500 shadow-[0_10px_40px_-15px_rgba(0,0,0,0.05)] hover:shadow-[0_20px_60px_-10px_rgba(163,255,0,0.15)] flex flex-col items-center text-center">
+                        <div class="mb-8 relative">
+                            <div
+                                class="absolute inset-0 bg-primary-fixed/20 blur-xl rounded-full scale-0 group-hover:scale-150 transition-transform duration-500">
+                            </div>
+                            <div
+                                class="w-20 h-20 rounded-2xl bg-inverse-surface flex items-center justify-center group-hover:bg-primary-fixed transition-colors duration-500 relative z-10">
+                                <span
+                                    class="material-symbols-outlined text-primary-fixed text-4xl group-hover:text-on-primary-fixed transition-colors duration-500">calendar_today</span>
+                            </div>
+                        </div>
+                        <h3 class="text-xl font-black mb-4 tracking-tight text-inverse-surface">Plan de Mantenimiento
+                            Mensual</h3>
+                        <p class="text-sm text-on-surface-variant leading-relaxed">Suscripción de protección continua
+                            que garantiza cero incidencias y cumplimiento legal permanente.</p>
+                        <div
+                            class="mt-auto pt-8 flex items-center gap-2 text-primary font-bold text-xs uppercase tracking-widest">
+                            Cero Riesgos <span class="material-symbols-outlined text-sm">verified</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Services Section -->
+        <section class="bg-surface-container-low py-32 px-8" id="services">
+            <div class="max-w-7xl mx-auto">
+                <div class="flex flex-col md:flex-row md:justify-between md:items-end mb-16 gap-8">
+                    <div>
+                        <h2 class="text-4xl md:text-5xl font-black font-headline tracking-tighter text-inverse-surface">
+                            Soluciones de Grado Industrial</h2>
+                        <p class="text-on-surface-variant mt-4">Especializados en control preventivo y correctivo para
+                            la industria alimentaria.</p>
+                    </div>
+                    <div class="flex gap-4">
+                        <button
+                            class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center hover:bg-inverse-surface hover:text-white transition-all">
+                            <span class="material-symbols-outlined">arrow_back</span>
+                        </button>
+                        <button
+                            class="w-12 h-12 rounded-full border border-outline-variant/30 flex items-center justify-center hover:bg-inverse-surface hover:text-white transition-all">
+                            <span class="material-symbols-outlined">arrow_forward</span>
+                        </button>
+                    </div>
+                </div>
+                <div class="grid md:grid-cols-3 gap-8">
+                    <!-- Card 1 -->
+                    <div class="bg-white rounded-lg p-2 shadow-sm group">
+                        <div class="h-64 rounded-lg overflow-hidden mb-8 relative">
+                            <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                data-alt="High-end professional kitchen with clean stainless steel surfaces"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBJTZQ5g-EhNf0mUmDRC0_Cw5knRq8qHEFATjKsE9AyOsRu67ZTbV__p4EOcPMJuINLxz-KxcyzulegLlqn5IVxCsyErD1LnBmZ4cLI8p0knKu3m14VK3VQ9hE8qA1c81cSRJrslyCnPk32y4tyocjwHFZ-eii7X9AeWCJAOwBVRRWv8G5gF2nw1h3qyf_jeLfRvLRJ_SNIfxdkT6xiCitKc9w93viE1R4j8N9BMYjHi1qI1zuXO4t1IUJsReeLtbmPX4WqonkXNPcM" />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 to-transparent flex items-end p-8">
+                                <h4 class="text-white font-black text-2xl tracking-tight">Cocinas Libres de Cucarachas
+                                </h4>
+                            </div>
+                        </div>
+                        <div class="px-6 pb-6">
+                            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Tratamientos específicos con
+                                geles de alta atracción y nulo residuo químico en superficies de contacto.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black tracking-widest uppercase text-primary">Priority
+                                    Care</span>
+                                <span class="material-symbols-outlined text-primary-fixed-dim">arrow_outward</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 2 -->
+                    <div class="bg-white rounded-lg p-2 shadow-sm group">
+                        <div class="h-64 rounded-lg overflow-hidden mb-8 relative">
+                            <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                data-alt="Industrial warehouse with modern shelving and bright lighting"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuA5OhQtdtFdufUDY2b5EXxOLbCsgfNuUA7ZlVKTUDiMs1T-_2RYFpoFz4KUyyqiBkyx1FQYZ11G_9j8tcMG33GHZCilzIHljKN9cHDRrxxAwD05IXMt-6ZJLJv0oAgwaXCx8ESvmcuCBOrwYeJjv0qyguYU7HJmE_E07bTQIRA-LUxTVEpiUx3_UAqiV1CdG8NaEXdZP-jM5XtdKpGEomCI8Puuw5g40KnY90L4xMwy7fnOs5V2hxDTCGl1xiU7FojczN7RQK-TUXoY" />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 to-transparent flex items-end p-8">
+                                <h4 class="text-white font-black text-2xl tracking-tight">Fumigación Industrial</h4>
+                            </div>
+                        </div>
+                        <div class="px-6 pb-6">
+                            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Cobertura total para bodegas
+                                y centros de distribución con drones y nebulización ULV.</p>
+                            <div class="flex items-center justify-between">
+                                <span class="text-xs font-black tracking-widest uppercase text-primary">Heavy
+                                    Duty</span>
+                                <span class="material-symbols-outlined text-primary-fixed-dim">arrow_outward</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Card 3 -->
+                    <div class="bg-white rounded-lg p-2 shadow-sm group">
+                        <div class="h-64 rounded-lg overflow-hidden mb-8 relative">
+                            <img class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                                data-alt="Modern upscale restaurant dining area at night"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuCF_rAxr6UqoBZxlTjTpPOucDiYmd0QlGeqnPUyaL_InMjZYmKwA_Zcj0I6IOyri-ozkfj754fdX3NVdwypfNa_jxOEr9rc-eYDUFRvUgnqE6XSu2MLmlRThuMBpi-KLd_gSmYFSdHM8ljYJwtmOkPv1rYooVhxDgLKCaoMo1fqHE2CIS42QkbZknOgzczyMKVrzUejydxKsWS-ezVf-R0mnYsbfZXynkacRVAJ6jYn88CJHfBNTcmdqyIu1nbtgucAWnseHQqXqZC8" />
+                            <div
+                                class="absolute inset-0 bg-gradient-to-t from-inverse-surface/80 to-transparent flex items-end p-8">
+                                <h4 class="text-white font-black text-2xl tracking-tight">Planes Mensuales</h4>
+                            </div>
+                        </div>
+                        <div class="px-6 pb-6">
+                            <p class="text-sm text-on-surface-variant mb-6 leading-relaxed">Suscripciones de
+                                mantenimiento preventivo con asistencia 24/7 y visitas de emergencia incluidas.</p>
+                            <div class="flex items-center justify-between">
+                                <span
+                                    class="text-xs font-black tracking-widest uppercase text-primary">All-Inclusive</span>
+                                <span class="material-symbols-outlined text-primary-fixed-dim">arrow_outward</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <!-- Why Us Section (Editorial Layout) -->
+        <section class="py-32 px-8 max-w-7xl mx-auto">
+            <div class="grid lg:grid-cols-2 gap-24 items-center">
+                <div class="order-2 lg:order-1 relative">
+                    <img class="rounded-lg shadow-2xl w-full grayscale-[50%] hover:grayscale-0 transition-all duration-700"
+                        data-alt="Close up of a smart glass surface showing data and circuit patterns"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAQAb6DIMsqcYPj635AxkFVLcL3fyOwgKOihPCpe_M_dkcJx587AhSR_ktwhR0iT8nErM7l87LzA77DHwOZON3DocHc20hD8hsWDkw67KxGu04EOXeZHx6_InMpBTnTRmmfcdI_SpRJKGhwkDC2lbGaedROH1Q-9-ZpCrzLuW75Blhz8cjoX6txIHHVkHKOGkFTKSLMMMErU4SNhg8A7IbKd6rID1_0vRKbo12yzyvUrxytBW07KZeaWhFUF7nEtPWV2m7xhg6MpuyM" />
+                    <div class="absolute -bottom-10 -right-10 bg-primary-fixed p-12 rounded-lg hidden md:block">
+                        <p class="text-5xl font-black text-inverse-surface">100%</p>
+                        <p class="text-sm font-bold uppercase tracking-widest text-on-primary-fixed opacity-70">
+                            Certificado</p>
+                    </div>
+                </div>
+                <div class="order-1 lg:order-2">
+                    <h2
+                        class="text-4xl md:text-5xl font-black font-headline tracking-tighter text-inverse-surface mb-12 leading-none">
+                        ¿Por qué somos el estándar de la industria?</h2>
+                    <ul class="space-y-8">
+                        <li class="flex items-start gap-6 group">
+                            <div
+                                class="mt-1 w-6 h-6 rounded-full bg-primary-container flex items-center justify-center shrink-0 group-hover:scale-125 transition-transform">
+                                <span class="material-symbols-outlined text-on-primary-container text-sm"
+                                    style="font-variation-settings: 'FILL' 1;">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-lg text-inverse-surface">Certificación Cofepris</h4>
+                                <p class="text-on-surface-variant text-sm mt-1">Cumplimos con toda la normativa federal
+                                    vigente para uso de químicos.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-6 group">
+                            <div
+                                class="mt-1 w-6 h-6 rounded-full bg-primary-container flex items-center justify-center shrink-0 group-hover:scale-125 transition-transform">
+                                <span class="material-symbols-outlined text-on-primary-container text-sm"
+                                    style="font-variation-settings: 'FILL' 1;">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-lg text-inverse-surface">Reportes Digitales de Incidencia
+                                </h4>
+                                <p class="text-on-surface-variant text-sm mt-1">Trazabilidad completa de cada visita en
+                                    tu panel de cliente.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-6 group">
+                            <div
+                                class="mt-1 w-6 h-6 rounded-full bg-primary-container flex items-center justify-center shrink-0 group-hover:scale-125 transition-transform">
+                                <span class="material-symbols-outlined text-on-primary-container text-sm"
+                                    style="font-variation-settings: 'FILL' 1;">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-lg text-inverse-surface">Químicos Biodegradables</h4>
+                                <p class="text-on-surface-variant text-sm mt-1">Seguridad total para tus alimentos,
+                                    comensales y personal.</p>
+                            </div>
+                        </li>
+                        <li class="flex items-start gap-6 group">
+                            <div
+                                class="mt-1 w-6 h-6 rounded-full bg-primary-container flex items-center justify-center shrink-0 group-hover:scale-125 transition-transform">
+                                <span class="material-symbols-outlined text-on-primary-container text-sm"
+                                    style="font-variation-settings: 'FILL' 1;">check</span>
+                            </div>
+                            <div>
+                                <h4 class="font-black text-lg text-inverse-surface">Garantía de Satisfacción</h4>
+                                <p class="text-on-surface-variant text-sm mt-1">Si la plaga persiste en 48h, regresamos
+                                    sin costo adicional.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+        <!-- Sectors Section -->
+        <section class="bg-inverse-surface py-32 px-8 overflow-hidden" id="sectors">
+            <div class="max-w-7xl mx-auto text-center mb-20">
+                <h2 class="text-white text-4xl font-black font-headline mb-4 uppercase tracking-tighter">Sectores
+                    Protegidos</h2>
+                <div class="w-24 h-1 bg-primary-fixed mx-auto"></div>
+            </div>
+            <div class="max-w-7xl mx-auto flex flex-wrap justify-center gap-12 opacity-60">
+                <div class="flex flex-col items-center gap-4 group cursor-default">
+                    <span
+                        class="material-symbols-outlined text-white text-5xl group-hover:text-primary-fixed transition-colors">restaurant</span>
+                    <span class="text-white text-[10px] font-black tracking-widest uppercase">Restaurantes</span>
+                </div>
+                <div class="flex flex-col items-center gap-4 group cursor-default">
+                    <span
+                        class="material-symbols-outlined text-white text-5xl group-hover:text-primary-fixed transition-colors">corporate_fare</span>
+                    <span class="text-white text-[10px] font-black tracking-widest uppercase">Oficinas</span>
+                </div>
+                <div class="flex flex-col items-center gap-4 group cursor-default">
+                    <span
+                        class="material-symbols-outlined text-white text-5xl group-hover:text-primary-fixed transition-colors">hotel</span>
+                    <span class="text-white text-[10px] font-black tracking-widest uppercase">Hoteles</span>
+                </div>
+                <div class="flex flex-col items-center gap-4 group cursor-default">
+                    <span
+                        class="material-symbols-outlined text-white text-5xl group-hover:text-primary-fixed transition-colors">warehouse</span>
+                    <span class="text-white text-[10px] font-black tracking-widest uppercase">Almacenes</span>
+                </div>
+                <div class="flex flex-col items-center gap-4 group cursor-default">
+                    <span
+                        class="material-symbols-outlined text-white text-5xl group-hover:text-primary-fixed transition-colors">home</span>
+                    <span class="text-white text-[10px] font-black tracking-widest uppercase">Residencial</span>
+                </div>
+            </div>
+        </section>
+        <!-- Final CTA Section -->
+        <section class="py-32 px-8 max-w-5xl mx-auto text-center">
+            <div class="bg-surface-container-high rounded-lg p-16 md:p-24 relative overflow-hidden">
+                <div
+                    class="absolute top-0 right-0 w-64 h-64 bg-primary-fixed/20 blur-[100px] rounded-full -translate-y-1/2 translate-x-1/2">
+                </div>
+                <h2 class="text-4xl md:text-6xl font-black font-headline tracking-tighter text-inverse-surface mb-8">
+                    ¿Listo para un diagnóstico <span class="text-primary-dim">sin costo</span>?
+                </h2>
+                <p class="text-lg text-on-surface-variant mb-12 max-w-2xl mx-auto">
+                    No esperes a una inspección. Evalúa tu nivel de riesgo hoy mismo con uno de nuestros especialistas
+                    certificados.
+                </p>
+                <div class="flex flex-col md:flex-row justify-center gap-4">
+                    <button
+                        class="bg-primary-fixed text-on-primary-fixed px-10 py-5 rounded-xl font-black uppercase tracking-tight flex items-center justify-center gap-3 shadow-2xl hover:bg-primary transition-all">
+                        <span class="material-symbols-outlined">chat</span>
+                        Agendar vía WhatsApp
+                    </button>
+                    <button
+                        class="bg-inverse-surface text-white px-10 py-5 rounded-xl font-black uppercase tracking-tight hover:opacity-90 transition-opacity">
+                        Llamar ahora
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+    <!-- Footer Shell -->
+    <footer class="bg-zinc-950 w-full pt-16 pb-8">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-12 px-8 max-w-7xl mx-auto">
+            <div class="md:col-span-1">
+                <div class="text-lg font-black text-white uppercase tracking-tighter mb-6">Martex</div>
+                <p class="text-zinc-500 text-sm leading-relaxed mb-6">
+                    Soluciones avanzadas de bioseguridad y control de amenazas para empresas que no comprometen su
+                    estándar de higiene.
+                </p>
+                <div class="flex gap-4">
+                    <div
+                        class="w-8 h-8 rounded-full bg-zinc-900 flex items-center justify-center text-white hover:text-[#A3FF00] transition-colors cursor-pointer">
+                        <span class="material-symbols-outlined text-sm">share</span>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Servicios</h4>
+                <ul class="space-y-4 text-zinc-400 text-sm font-['Manrope']">
+                    <li class="hover:text-[#A3FF00] transition-colors cursor-pointer">Control de Roedores</li>
+                    <li class="hover:text-[#A3FF00] transition-colors cursor-pointer">Sanitización Grado Hospital</li>
+                    <li class="hover:text-[#A3FF00] transition-colors cursor-pointer">Nebulización Térmica</li>
+                    <li class="hover:text-[#A3FF00] transition-colors cursor-pointer">Certificaciones Cofepris</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Legal</h4>
+                <ul class="space-y-4 text-zinc-400 text-sm font-['Manrope']">
+                    <li class="hover:text-[#A3FF00] transition-colors cursor-pointer">Privacy Policy</li>
+                    <li class="hover:text-[#A3FF00] transition-colors cursor-pointer">Cofepris Certified</li>
+                    <li class="hover:text-[#A3FF00] transition-colors cursor-pointer">Service Areas</li>
+                    <li class="hover:text-[#A3FF00] transition-colors cursor-pointer">Term of Service</li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-bold mb-6 text-sm uppercase tracking-widest">Contacto</h4>
+                <ul class="space-y-4 text-zinc-400 text-sm font-['Manrope']">
+                    <li class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-[#A3FF00] text-lg">call</span>
+                        +52 222 555 0123
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-[#A3FF00] text-lg">location_on</span>
+                        Puebla, México
+                    </li>
+                    <li class="flex items-center gap-3">
+                        <span class="material-symbols-outlined text-[#A3FF00] text-lg">mail</span>
+                        info@digitalguardian.mx
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div
+            class="max-w-7xl mx-auto px-8 mt-16 pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="font-['Manrope'] text-zinc-400 text-sm">© 2026 Martex control de plagas. Todos los derechos reservados.
+            </p>
+            <div class="flex gap-6 text-zinc-500 text-xs font-bold uppercase tracking-widest">
+                <span>Facebook</span>
+                <span>Instagram</span>
+                <span>LinkedIn</span>
+            </div>
+        </div>
+    </footer>
+    <script src="main.js"></script>
+    <script src="section-problemas.js"></script>
+</body>
+
+</html>
